@@ -1,0 +1,80 @@
+import type { FindFuelSuccess, Station } from '../lib/types';
+import { aud, cpl, km, litres } from '../lib/format';
+
+interface Props {
+  result: FindFuelSuccess;
+}
+
+function byCode(stations: Station[], code: string | undefined): Station | undefined {
+  return code ? stations.find((s) => s.code === code) : undefined;
+}
+
+export default function SavingsPanel({ result }: Props) {
+  const { stations, recommendation, query } = result;
+  const best = byCode(stations, recommendation.stationCode);
+  if (!best) return null;
+
+  const isDollar = query.fillMode === 'dollars';
+  const { vsNextCheapest, vsNearest, bestIsHeadlineCheapest } = recommendation;
+
+  const headline = isDollar
+    ? `${litres(best.netLitres ?? 0)} actually in your tank for ${aud(query.dollarsToSpend ?? 0)}`
+    : `${aud(best.totalCostAud)} to fill ${litres(query.litresToFill ?? 0)}`;
+
+  return (
+    <section className="rounded-lg bg-accent text-white p-4">
+      <div className="text-[11px] font-semibold uppercase tracking-[1.5px] text-accent-soft">
+        Best value
+      </div>
+      <h2 className="display text-xl mt-1 leading-tight">
+        {best.brand} <span className="font-normal text-white/80">· {best.name}</span>
+      </h2>
+      <p className="text-sm text-white/80 mt-0.5">{best.address}</p>
+
+      <div className="display-tight nums text-2xl mt-3">{headline}</div>
+
+      {/* The whole point: best value counts the pump price AND the fuel burned
+          driving there and back from the chosen origin. */}
+      {isDollar ? (
+        <div className="text-sm text-white/70 nums mt-1">
+          net of the fuel burned on the {km(best.oneWayKm)} drive each way
+        </div>
+      ) : (
+        <div className="text-sm text-white/70 nums mt-1">
+          {aud(best.fillCostAud)} fuel + {aud(best.burnedCostAud)} drive · {km(best.oneWayKm)} each way
+        </div>
+      )}
+
+      {bestIsHeadlineCheapest ? (
+        <p className="text-sm text-white/85 mt-3">
+          The cheapest sticker price is also the best deal here — no trick.
+        </p>
+      ) : (
+        <p className="text-sm text-white/85 mt-3">
+          A lower sticker price elsewhere loses once you count the drive.
+        </p>
+      )}
+
+      {(vsNextCheapest || vsNearest) && (
+        <div className="grid grid-cols-2 gap-2 mt-4">
+          {vsNextCheapest && (
+            <div className="rounded-md bg-white/10 p-3">
+              <div className="text-[11px] text-accent-soft uppercase tracking-wide">
+                vs next-cheapest
+              </div>
+              <div className="display nums text-lg mt-0.5">{cpl(vsNextCheapest.cplSaved)}</div>
+              <div className="text-xs text-white/80 nums">{aud(vsNextCheapest.dollarsSaved)} better</div>
+            </div>
+          )}
+          {vsNearest && (
+            <div className="rounded-md bg-white/10 p-3">
+              <div className="text-[11px] text-accent-soft uppercase tracking-wide">vs nearest</div>
+              <div className="display nums text-lg mt-0.5">{cpl(vsNearest.cplSaved)}</div>
+              <div className="text-xs text-white/80 nums">{aud(vsNearest.dollarsSaved)} better</div>
+            </div>
+          )}
+        </div>
+      )}
+    </section>
+  );
+}

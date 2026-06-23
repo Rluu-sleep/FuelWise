@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    margin: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    color: #0a0a0a;
+    background: #fffaf0;
+  }
+  /* Plain Black substitute: Inter 500 + negative tracking for display headings. */
+  .display {
+    font-weight: 500;
+    letter-spacing: -0.03em;
+  }
+  .display-tight {
+    font-weight: 500;
+    letter-spacing: -0.05em;
+  }
+  /* Tabular figures so prices/dollars don't jitter. */
+  .nums {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Mapbox marker chrome */
+.fw-marker {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 9999px;
+  background: #ffffff;
+  color: #0a0a0a;
+  border: 2px solid #0a0a0a;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+  transition: transform 0.12s ease;
+}
+.fw-marker:hover {
+  transform: scale(1.08);
+}
+.fw-marker--best {
+  width: 38px;
+  height: 38px;
+  background: #1a3a3a;
+  color: #ffffff;
+  border-color: #1a3a3a;
+  font-size: 15px;
+  z-index: 3;
+}
+.fw-marker--selected {
+  outline: 3px solid #ffb084;
+  outline-offset: 2px;
+}
+.fw-marker--origin {
+  width: 18px;
+  height: 18px;
+  background: #ff4d8b;
+  border: 3px solid #ffffff;
+  box-shadow: 0 0 0 2px #ff4d8b;
+}
+
+/* Thin scrollbar for the results list */
+.fw-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+.fw-scroll::-webkit-scrollbar-thumb {
+  background: #e5e5e5;
+  border-radius: 9999px;
+}
