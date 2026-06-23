@@ -78,6 +78,7 @@ function reducer(state: State, action: Action): State {
 export default function App() {
   const [state, dispatch] = useReducer(reducer, initial);
   const [loadingStage, setLoadingStage] = useState(0);
+  const [locating, setLocating] = useState(false);
   const stageTimers = useRef<number[]>([]);
 
   const setInputs = useCallback((patch: Partial<Inputs>) => {
@@ -122,32 +123,16 @@ export default function App() {
       dispatch({ type: 'error', error: 'Your browser does not support location access.' });
       return;
     }
-    const { inputs } = state;
-    dispatch({ type: 'submit' });
-    setLoadingStage(0);
+    setLocating(true);
 
     navigator.geolocation.getCurrentPosition(
-      async (pos) => {
+      (pos) => {
         const origin = { lat: pos.coords.latitude, lon: pos.coords.longitude };
-        // Drop the pink dot at the user's location immediately, before the search.
-        dispatch({ type: 'setInputs', patch: { origin } });
-        stageTimers.current.forEach(clearTimeout);
-        stageTimers.current = [
-          window.setTimeout(() => setLoadingStage(1), 200),
-          window.setTimeout(() => setLoadingStage(2), 1200),
-        ];
-        const res = await findFuel({
-          address: '',
-          origin,
-          fuelType: inputs.fuelType,
-          fillMode: inputs.fillMode,
-          fillValue: inputs.fillValue,
-          consumption: inputs.vehicle.consumption,
-          tank: inputs.vehicle.tank,
-        });
-        stageTimers.current.forEach(clearTimeout);
-        if (res.ok) dispatch({ type: 'success', result: res });
-        else dispatch({ type: 'error', error: res.error });
+        // Capture the location only: drop the pink dot and fill the field, but
+        // DON'T search. The user reviews fuel / vehicle / amount options and
+        // submits when ready.
+        dispatch({ type: 'setInputs', patch: { origin, address: 'My current location' } });
+        setLocating(false);
       },
       (err) => {
         const msg =
@@ -155,10 +140,11 @@ export default function App() {
             ? 'Location permission denied. Allow it in your browser, or type an address.'
             : 'Could not get your location. Try typing an address instead.';
         dispatch({ type: 'error', error: msg });
+        setLocating(false);
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 },
     );
-  }, [state]);
+  }, []);
 
   const reset = useCallback(() => dispatch({ type: 'reset' }), []);
 
@@ -174,6 +160,7 @@ export default function App() {
         result={state.result}
         error={state.error}
         loadingStage={loadingStage}
+        locating={locating}
         selectedCode={state.selectedCode}
         onChange={setInputs}
         onSubmit={submit}

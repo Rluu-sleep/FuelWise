@@ -5,6 +5,8 @@ import type { Suggestion } from '../lib/types';
 interface Props {
   value: string;
   disabled?: boolean;
+  /** True while the browser geolocation request is in flight. */
+  locating?: boolean;
   /** Free typing — parent should clear any stored origin coords. */
   onChange: (text: string) => void;
   /** A suggestion was picked — parent gets the label + exact coords. */
@@ -15,6 +17,7 @@ interface Props {
 export default function AddressField({
   value,
   disabled,
+  locating,
   onChange,
   onSelect,
   onUseLocation,
@@ -129,7 +132,7 @@ export default function AddressField({
       <button
         type="button"
         onClick={onUseLocation}
-        disabled={disabled}
+        disabled={disabled || locating}
         className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-accent hover:underline disabled:opacity-50"
       >
         <svg
@@ -146,7 +149,7 @@ export default function AddressField({
           <circle cx="12" cy="12" r="3" />
           <path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
         </svg>
-        Use my current location
+        {locating ? 'Getting your location…' : 'Use my current location'}
       </button>
     </div>
   );

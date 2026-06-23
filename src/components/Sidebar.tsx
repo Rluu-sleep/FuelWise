@@ -13,6 +13,7 @@ interface Props {
   result: FindFuelSuccess | null;
   error: string | null;
   loadingStage: number;
+  locating: boolean;
   selectedCode: string | null;
   onChange: (patch: Partial<Inputs>) => void;
   onSubmit: () => void;
@@ -40,7 +41,8 @@ export default function Sidebar(props: Props) {
   const canSubmit =
     inputs.address.trim().length > 0 &&
     (inputs.fillMode === 'full_tank' || (inputs.fillValue ?? 0) > 0) &&
-    status !== 'loading';
+    status !== 'loading' &&
+    !props.locating;
 
   return (
     <aside className="w-full md:w-[368px] md:h-full shrink-0 border-b md:border-b-0 md:border-r border-hairline bg-canvas flex flex-col">
@@ -69,6 +71,7 @@ function Form({
   status,
   error,
   loadingStage,
+  locating,
   canSubmit,
   onChange,
   onSubmit,
@@ -92,6 +95,7 @@ function Form({
         <AddressField
           value={inputs.address}
           disabled={loading}
+          locating={locating}
           onChange={(text) => onChange({ address: text, origin: null })}
           onSelect={(label, origin) => onChange({ address: label, origin })}
           onUseLocation={onUseLocation}
