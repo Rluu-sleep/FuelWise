@@ -5,6 +5,10 @@ import type { Suggestion } from '../lib/types';
 interface Props {
   value: string;
   disabled?: boolean;
+  /** True when the value reflects a chosen place (picked suggestion or located
+   *  position). Suppresses type-ahead so a programmatic fill doesn't open the
+   *  dropdown; cleared as soon as the user types (parent drops the origin). */
+  hasOrigin?: boolean;
   /** True while the browser geolocation request is in flight. */
   locating?: boolean;
   /** Free typing — parent should clear any stored origin coords. */
@@ -17,6 +21,7 @@ interface Props {
 export default function AddressField({
   value,
   disabled,
+  hasOrigin,
   locating,
   onChange,
   onSelect,
@@ -32,6 +37,12 @@ export default function AddressField({
   useEffect(() => {
     if (skipNextFetch.current) {
       skipNextFetch.current = false;
+      return;
+    }
+    // Don't type-ahead a chosen place (picked suggestion / located position) —
+    // only when the user is typing, which clears the origin in the parent.
+    if (hasOrigin) {
+      setOpen(false);
       return;
     }
     const q = value.trim();
@@ -53,7 +64,7 @@ export default function AddressField({
       window.clearTimeout(t);
       ctrl.abort();
     };
-  }, [value]);
+  }, [value, hasOrigin]);
 
   // Close the dropdown on outside click.
   useEffect(() => {

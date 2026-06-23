@@ -95,6 +95,7 @@ function Form({
         <AddressField
           value={inputs.address}
           disabled={loading}
+          hasOrigin={inputs.origin !== null}
           locating={locating}
           onChange={(text) => onChange({ address: text, origin: null })}
           onSelect={(label, origin) => onChange({ address: label, origin })}

@@ -1,10 +1,13 @@
-// GET /api/geocode-suggest?q=<text> — address type-ahead for the location field.
-// Thin wrapper over ORS autocomplete (NSW-bounded). Fails soft: any upstream
-// hiccup returns an empty list rather than an error, so type-ahead never blocks
-// the user. Served by Vercel in prod and the dev-api plugin locally.
+// GET /api/geocode-suggest — address helper for the location field.
+//   ?q=<text>         -> type-ahead suggestions (ORS autocomplete, NSW-bounded).
+//   ?lat=..&lon=..    -> reverse-geocode coords to a readable label (used by
+//                        "Use my current location" to show the place name).
+// Thin wrapper over ORS. Fails soft: any upstream hiccup returns an empty list /
+// generic label rather than an error, so it never blocks the user. Served by
+// Vercel in prod and the dev-api plugin locally.
 
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import { autocomplete } from './_lib/geocode.js';
+import { autocomplete, reverseGeocode } from './_lib/geocode.js';
 
 function send(res: ServerResponse, status: number, payload: unknown): void {
   res.statusCode = status;
@@ -19,6 +22,20 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
   }
 
   const url = new URL(req.url ?? '', 'http://localhost');
+
+  // Reverse mode: coords -> readable label. reverseGeocode never throws.
+  const latRaw = url.searchParams.get('lat');
+  const lonRaw = url.searchParams.get('lon');
+  if (latRaw !== null && lonRaw !== null) {
+    const lat = Number(latRaw);
+    const lon = Number(lonRaw);
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+      return send(res, 200, { ok: true, label: 'Your current location' });
+    }
+    const label = await reverseGeocode(lat, lon, orsKey);
+    return send(res, 200, { ok: true, label });
+  }
+
   const q = (url.searchParams.get('q') ?? '').trim();
   if (q.length < 3) {
     return send(res, 200, { ok: true, suggestions: [] });

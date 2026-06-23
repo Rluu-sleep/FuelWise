@@ -1,7 +1,7 @@
 import { useCallback, useReducer, useRef, useState } from 'react';
 import Sidebar from './components/Sidebar';
 import MapView from './components/MapView';
-import { findFuel } from './lib/api';
+import { findFuel, reverseGeocode } from './lib/api';
 import type { FindFuelSuccess, FillMode, FuelType } from './lib/types';
 import { VEHICLE_CATEGORIES, type VehicleCategory } from './lib/vehicles';
 
@@ -126,12 +126,15 @@ export default function App() {
     setLocating(true);
 
     navigator.geolocation.getCurrentPosition(
-      (pos) => {
+      async (pos) => {
         const origin = { lat: pos.coords.latitude, lon: pos.coords.longitude };
         // Capture the location only: drop the pink dot and fill the field, but
         // DON'T search. The user reviews fuel / vehicle / amount options and
         // submits when ready.
-        dispatch({ type: 'setInputs', patch: { origin, address: 'My current location' } });
+        dispatch({ type: 'setInputs', patch: { origin, address: 'Locating address…' } });
+        // Reverse-geocode so the field shows the actual place, not a placeholder.
+        const label = await reverseGeocode(origin.lat, origin.lon);
+        dispatch({ type: 'setInputs', patch: { origin, address: label } });
         setLocating(false);
       },
       (err) => {

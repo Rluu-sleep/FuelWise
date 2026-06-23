@@ -15,6 +15,18 @@ export async function geocodeSuggest(
   }
 }
 
+/** Reverse-geocode coords to a readable label for the location field. Best-effort:
+ *  returns a generic fallback on any failure so it never blocks the user. */
+export async function reverseGeocode(lat: number, lon: number): Promise<string> {
+  try {
+    const res = await fetch(`/api/geocode-suggest?lat=${lat}&lon=${lon}`);
+    const data = await res.json();
+    return data?.ok && data.label ? (data.label as string) : 'Your current location';
+  } catch {
+    return 'Your current location';
+  }
+}
+
 export async function findFuel(req: FindFuelRequest): Promise<FindFuelResponse> {
   let res: Response;
   try {
