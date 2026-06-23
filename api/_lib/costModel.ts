@@ -3,7 +3,7 @@
 // returns enriched, ranked stations plus the recommendation. Single source of
 // truth, unit-tested in tests/costModel.test.ts. Ported from find_fuel.py.
 
-import type { FillMode, Recommendation, SavingsVs, Station } from './types';
+import type { FillMode, Recommendation, SavingsVs, Station } from './types.js';
 
 export interface RawStation {
   code: string;

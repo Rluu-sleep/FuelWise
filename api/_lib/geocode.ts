@@ -2,8 +2,8 @@
 // One ORS key serves both geocoding and routing. Validates the result is in NSW
 // and rejects otherwise (ported intent from find_fuel.py's state check).
 
-import { UpstreamError } from './http';
-import type { Suggestion } from './types';
+import { UpstreamError } from './http.js';
+import type { Suggestion } from './types.js';
 
 export interface GeoResult {
   lat: number;

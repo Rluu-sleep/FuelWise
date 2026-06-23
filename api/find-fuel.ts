@@ -4,21 +4,21 @@
 // plugin in vite.config.ts (no Vercel CLI needed for local development).
 
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import { UpstreamError } from './_lib/http';
-import { geocode, isInNsw, reverseGeocode } from './_lib/geocode';
+import { UpstreamError } from './_lib/http.js';
+import { geocode, isInNsw, reverseGeocode } from './_lib/geocode.js';
 import {
   EXPANDED_RADIUS_KM,
   findNearbyStations,
   getToken,
-} from './_lib/fuelcheck';
-import { drivingDistancesKm } from './_lib/routing';
-import { analyseStations, type FillSpec } from './_lib/costModel';
+} from './_lib/fuelcheck.js';
+import { drivingDistancesKm } from './_lib/routing.js';
+import { analyseStations, type FillSpec } from './_lib/costModel.js';
 import type {
   FillMode,
   FindFuelRequest,
   FindFuelResponse,
   FuelType,
-} from './_lib/types';
+} from './_lib/types.js';
 
 const VALID_FUEL: ReadonlySet<string> = new Set(['E10', 'U91', 'P95', 'P98']);
 const VALID_MODE: ReadonlySet<string> = new Set(['full_tank', 'litres', 'dollars']);

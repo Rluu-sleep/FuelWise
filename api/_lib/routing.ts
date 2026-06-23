@@ -1,8 +1,8 @@
 // Real driving distances via ORS matrix, with a haversine x 1.3 per-leg fallback
 // (PRODUCT_BRIEF §8.3). Ported from find_fuel.py's driving_distances_km.
 
-import { haversineKm } from './http';
-import type { RawStation } from './costModel';
+import { haversineKm } from './http.js';
+import type { RawStation } from './costModel.js';
 
 const ORS_MATRIX_URL = 'https://api.openrouteservice.org/v2/matrix/driving-car';
 const STRAIGHT_LINE_MULTIPLIER = 1.3; // urban-driving heuristic

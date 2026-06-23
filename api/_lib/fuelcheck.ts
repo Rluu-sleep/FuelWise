@@ -1,9 +1,9 @@
 // NSW FuelCheck — OAuth token + nearby prices (PRODUCT_BRIEF §8.2).
 // Ported from find_fuel.py's get_fuelcheck_token + fuelcheck_nearby.
 
-import { UpstreamError } from './http';
-import type { FuelType } from './types';
-import type { RawStation } from './costModel';
+import { UpstreamError } from './http.js';
+import type { FuelType } from './types.js';
+import type { RawStation } from './costModel.js';
 
 const TOKEN_URL =
   'https://api.onegov.nsw.gov.au/oauth/client_credential/accesstoken?grant_type=client_credentials';

@@ -4,7 +4,7 @@
 // the user. Served by Vercel in prod and the dev-api plugin locally.
 
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import { autocomplete } from './_lib/geocode';
+import { autocomplete } from './_lib/geocode.js';
 
 function send(res: ServerResponse, status: number, payload: unknown): void {
   res.statusCode = status;
