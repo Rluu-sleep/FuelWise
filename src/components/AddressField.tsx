@@ -156,6 +156,7 @@ export default function AddressField({
           strokeLinecap="round"
           strokeLinejoin="round"
           aria-hidden="true"
+          className={locating ? 'animate-spin' : undefined}
         >
           <circle cx="12" cy="12" r="3" />
           <path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
