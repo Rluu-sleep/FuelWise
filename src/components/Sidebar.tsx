@@ -90,7 +90,7 @@ function FuelTypesInfo() {
         onFocus={() => setShow(true)}
         onBlur={() => setShow(false)}
         style={{ cursor: INFO_CURSOR }}
-        className="grid place-items-center w-2 h-2 rounded-full border border-muted-soft text-muted text-[6px] font-bold leading-none hover:border-ink hover:text-ink focus:outline-none focus:border-ink focus:text-ink"
+        className="grid place-items-center w-3.5 h-3.5 rounded-full border border-muted-soft text-muted text-[9px] font-bold leading-none hover:border-ink hover:text-ink focus:outline-none focus:border-ink focus:text-ink"
       >
         i
       </button>
