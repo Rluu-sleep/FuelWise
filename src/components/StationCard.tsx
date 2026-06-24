@@ -11,26 +11,9 @@ interface Props {
   onSelect: (code: string) => void;
 }
 
+// Very old prices stay flagged red; everything else uses the same muted grey.
 const ageClass = (age: Station['priceAge']): string =>
-  age === 'old' ? 'text-error' : age === 'stale' ? 'text-warning' : 'text-muted-soft';
-
-// Generic / umbrella brands where the specific station name is more useful than
-// the brand as the card heading.
-const GENERIC_BRANDS = new Set([
-  'Independent',
-  '7-Eleven',
-  'Metro Fuel',
-  'Ampol Foodary',
-  'ASTRON',
-  'Enhance',
-  'Speedway',
-  'BP',
-  'EG Ampol',
-  'Reddy Express',
-  'Shell',
-  'Coral Petroleum',
-  'Ampol',
-]);
+  age === 'old' ? 'text-error' : 'text-muted-soft';
 
 export default function StationCard({
   station,
@@ -42,11 +25,10 @@ export default function StationCard({
 }: Props) {
   const ref = useRef<HTMLButtonElement>(null);
 
-  // For generic/umbrella brands, surface the actual station name as the heading
-  // instead of the brand. Drop the name subline when it duplicates the heading.
-  const heading =
-    GENERIC_BRANDS.has(station.brand) && station.name ? station.name : station.brand;
-  const subName = station.name && station.name !== heading ? station.name : null;
+  // Always use the station's own name as the heading; fall back to the brand
+  // only when no name is available.
+  const heading = station.name || station.brand;
+  const subName = !station.name && station.brand ? station.brand : null;
 
   useEffect(() => {
     if (isSelected) {

@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import type { FindFuelSuccess, Station } from '../lib/types';
 import { aud, cpl, km, litres } from '../lib/format';
 
@@ -12,8 +13,19 @@ function byCode(stations: Station[], code: string | undefined): Station | undefi
 }
 
 export default function SavingsPanel({ result, selectedCode, onSelect }: Props) {
+  const ref = useRef<HTMLButtonElement>(null);
   const { stations, recommendation, query } = result;
   const best = byCode(stations, recommendation.stationCode);
+  const isSelected = !!best && selectedCode === best.code;
+
+  // Mirror the white cards: when this card is the selected one (e.g. tapping the
+  // #1 marker on the map), scroll it into view in the sidebar.
+  useEffect(() => {
+    if (isSelected) {
+      ref.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, [isSelected]);
+
   if (!best) return null;
 
   // The best-value station's overall rank (its position in the ranked list) —
@@ -34,11 +46,12 @@ export default function SavingsPanel({ result, selectedCode, onSelect }: Props) 
 
   return (
     <button
+      ref={ref}
       type="button"
       onClick={() => onSelect(best.code)}
       className={
         'block w-full text-left rounded-lg bg-accent text-white p-4 transition-all ' +
-        (selectedCode === best.code ? 'ring-2 ring-orange-500 ' : '')
+        (isSelected ? 'ring-2 ring-orange-500 ' : '')
       }
     >
       <div className="flex items-start gap-3">
