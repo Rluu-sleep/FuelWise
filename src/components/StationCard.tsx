@@ -63,7 +63,7 @@ export default function StationCard({
             )}
           </div>
           <div className="text-sm text-body truncate">{station.name}</div>
-          <div className="text-xs text-muted truncate">{station.address}</div>
+          <div className="text-xs text-muted break-words">{station.address}</div>
 
           <div className="mt-3 flex items-end justify-between gap-2">
             <div>
