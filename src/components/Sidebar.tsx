@@ -67,12 +67,21 @@ export default function Sidebar(props: Props) {
   );
 }
 
+// A custom cursor: a small pointer plus a "More Information" label rendered to
+// the right of the hotspot, replacing the default help (?) cursor on the icon.
+const INFO_CURSOR_SVG =
+  "<svg xmlns='http://www.w3.org/2000/svg' width='128' height='20'>" +
+  "<path d='M0 0 L0 15 L4 11 L7 17 L9 16 L6 10 L11 10 Z' fill='#1c3c36' stroke='#ffffff' stroke-width='1'/>" +
+  "<text x='16' y='14' font-family='sans-serif' font-size='11' font-weight='600' fill='#1c3c36'>More Information</text>" +
+  '</svg>';
+const INFO_CURSOR = `url("data:image/svg+xml,${encodeURIComponent(INFO_CURSOR_SVG)}") 0 0, pointer`;
+
 /** Info icon + fuel-type descriptions. The popup shows only while the cursor is
  *  over the "i" icon (or it's keyboard-focused) and hides as soon as it leaves. */
 function FuelTypesInfo() {
   const [show, setShow] = useState(false);
   return (
-    <span className="relative inline-flex">
+    <span className="relative inline-flex -translate-y-0.5">
       <button
         type="button"
         aria-label="About the fuel types"
@@ -80,19 +89,20 @@ function FuelTypesInfo() {
         onMouseLeave={() => setShow(false)}
         onFocus={() => setShow(true)}
         onBlur={() => setShow(false)}
-        className="grid place-items-center w-2 h-2 rounded-full border border-muted-soft text-muted text-[6px] font-bold leading-none cursor-help hover:border-ink hover:text-ink focus:outline-none focus:border-ink focus:text-ink"
+        style={{ cursor: INFO_CURSOR }}
+        className="grid place-items-center w-2 h-2 rounded-full border border-muted-soft text-muted text-[6px] font-bold leading-none hover:border-ink hover:text-ink focus:outline-none focus:border-ink focus:text-ink"
       >
         i
       </button>
       {show && (
         <div
           role="tooltip"
-          className="pointer-events-none absolute left-0 top-6 z-30 w-64 rounded-md border border-hairline bg-white p-3 shadow-lg"
+          className="pointer-events-none absolute left-0 top-6 z-30 w-max max-w-[calc(100vw-2rem)] rounded-md border border-hairline bg-white p-3 shadow-lg"
         >
           <ul className="space-y-1.5 text-xs leading-snug text-body">
             {FUEL_TYPES.map((f) => (
-              <li key={f.id}>
-                <span className="font-semibold text-ink">{f.label}</span> — {f.desc}
+              <li key={f.id} className="whitespace-nowrap">
+                <span className="font-semibold text-ink">{f.label} ({f.tag})</span> — {f.desc}
               </li>
             ))}
           </ul>

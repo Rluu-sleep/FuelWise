@@ -16,8 +16,8 @@ export const VEHICLE_CATEGORIES: VehicleCategory[] = [
 ];
 
 export const FUEL_TYPES = [
-  { id: 'E10', label: 'E10', desc: 'Regular unleaded blended with up to 10% ethanol. Usually cheapest, but check your car supports it.' },
-  { id: 'U91', label: 'U91', desc: 'Standard 91-octane unleaded. The default fuel for most petrol cars.' },
-  { id: 'P95', label: 'P95', desc: 'Premium 95-octane unleaded. For engines that specify higher octane.' },
-  { id: 'P98', label: 'P98', desc: 'Premium 98-octane unleaded. Highest octane, for peak performance engines.' },
+  { id: 'E10', label: 'E10', tag: 'Budget', desc: 'Check if your car supports this fuel.' },
+  { id: 'U91', label: 'U91', tag: 'Cheap', desc: 'For most normal petrol cars.' },
+  { id: 'P95', label: 'P95', tag: 'Standard', desc: 'For many performance petrol cars.' },
+  { id: 'P98', label: 'P98', tag: 'Premium', desc: 'For expensive petrol cars.' },
 ] as const;
