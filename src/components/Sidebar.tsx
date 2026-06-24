@@ -298,17 +298,22 @@ function Results({
       )}
 
       <div className="space-y-2.5">
-        {stations.map((s, i) => (
-          <StationCard
-            key={s.code}
-            station={s}
-            rank={i + 1}
-            isBest={s.code === recommendation.stationCode}
-            isSelected={s.code === selectedCode}
-            fillMode={query.fillMode}
-            onSelect={onSelect}
-          />
-        ))}
+        {stations
+          // The best-value station is shown only as the green panel above — keep
+          // its overall rank number but omit its duplicate white card here.
+          .map((s, i) => ({ s, rank: i + 1 }))
+          .filter(({ s }) => s.code !== recommendation.stationCode)
+          .map(({ s, rank }) => (
+            <StationCard
+              key={s.code}
+              station={s}
+              rank={rank}
+              isBest={false}
+              isSelected={s.code === selectedCode}
+              fillMode={query.fillMode}
+              onSelect={onSelect}
+            />
+          ))}
       </div>
     </div>
   );

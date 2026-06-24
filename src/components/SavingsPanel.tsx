@@ -14,6 +14,10 @@ export default function SavingsPanel({ result }: Props) {
   const best = byCode(stations, recommendation.stationCode);
   if (!best) return null;
 
+  // The best-value station's overall rank (its position in the ranked list) —
+  // shown as a badge to match the numbered white cards below.
+  const rank = stations.findIndex((s) => s.code === recommendation.stationCode) + 1;
+
   const isDollar = query.fillMode === 'dollars';
   const { vsNextCheapest, vsNearest, bestIsHeadlineCheapest } = recommendation;
 
@@ -23,13 +27,20 @@ export default function SavingsPanel({ result }: Props) {
 
   return (
     <section className="rounded-lg bg-accent text-white p-4">
-      <div className="text-[11px] font-semibold uppercase tracking-[1.5px] text-accent-soft">
-        Best value
+      <div className="flex items-start gap-3">
+        <span className="shrink-0 grid place-items-center w-7 h-7 rounded-full bg-white text-accent text-sm font-semibold">
+          {rank}
+        </span>
+        <div className="min-w-0 flex-1">
+          <div className="text-[11px] font-semibold uppercase tracking-[1.5px] text-accent-soft">
+            Best value
+          </div>
+          <h2 className="display text-xl mt-1 leading-tight">
+            {best.brand} <span className="font-normal text-white/80">· {best.name}</span>
+          </h2>
+          <p className="text-sm text-white/80 mt-0.5">{best.address}</p>
+        </div>
       </div>
-      <h2 className="display text-xl mt-1 leading-tight">
-        {best.brand} <span className="font-normal text-white/80">· {best.name}</span>
-      </h2>
-      <p className="text-sm text-white/80 mt-0.5">{best.address}</p>
 
       <div className="display-tight nums text-2xl mt-3">{headline}</div>
 
