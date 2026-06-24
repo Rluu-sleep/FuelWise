@@ -132,11 +132,15 @@ function computePopupPlacements(
     b: r.bottom - cr.top + PAD,
   });
 
-  const occupied: Box[] = [];
-  markers.forEach(({ el }) => occupied.push(toLocal(el.getBoundingClientRect())));
-  if (originMarker) occupied.push(toLocal(originMarker.getElement().getBoundingClientRect()));
+  const markerBoxes: Box[] = [];
+  markers.forEach(({ el }) => markerBoxes.push(toLocal(el.getBoundingClientRect())));
+  if (originMarker) markerBoxes.push(toLocal(originMarker.getElement().getBoundingClientRect()));
 
-  const OFFSETS = [24, 44, 66];
+  // Keep popups hugging their marker so the tip points right at the number —
+  // a fixed small offset puts the arrow at the marker's edge. Only the anchor
+  // (direction) varies to dodge the other popups and neighbouring markers.
+  const OFFSETS = [16];
+  const placedPopups: Box[] = [];
   const placements: Placement[] = [];
 
   for (const s of stations) {
@@ -147,19 +151,26 @@ function computePopupPlacements(
     for (const offset of OFFSETS) {
       for (const anchor of ANCHORS) {
         const box = popupBox(pt.x, pt.y, anchor, offset);
-        let overlap = 0;
-        for (const o of occupied) overlap += overlapArea(box, o);
+        let popupOverlap = 0;
+        for (const o of placedPopups) popupOverlap += overlapArea(box, o);
+        let markerOverlap = 0;
+        for (const o of markerBoxes) markerOverlap += overlapArea(box, o);
         const off = offscreenArea(box, cr.width, cr.height);
-        // Collisions dominate; then prefer outward direction and a small offset.
+        // Never overlap another popup or run off-screen; sitting near another
+        // marker is only a mild nudge so the popup stays close to its own number
+        // (small offset + outward direction preferred).
         const score =
-          (overlap + off) * 100 + (angleDiff(OUTWARD[anchor], b) / 180) * 30 + offset * 0.05;
+          (popupOverlap + off) * 100 +
+          markerOverlap * 6 +
+          (angleDiff(OUTWARD[anchor], b) / 180) * 20 +
+          (offset - OFFSETS[0]) * 8;
         if (!best || score < best.score) best = { anchor, offset, box, score };
       }
     }
 
     if (best) {
       placements.push({ station: s, anchor: best.anchor, offset: best.offset });
-      occupied.push(best.box);
+      placedPopups.push(best.box);
     }
   }
 
@@ -172,6 +183,8 @@ export default function MapView({ token, origin, result, selectedCode, onSelect 
   const originMarkerRef = useRef<mapboxgl.Marker | null>(null);
   const markersRef = useRef<Map<string, { marker: mapboxgl.Marker; el: HTMLElement }>>(new Map());
   const pricePopupsRef = useRef<mapboxgl.Popup[]>([]);
+  // Codes that stay fully visible: the best-value (#1) and the nearest few.
+  const prominentCodesRef = useRef<Set<string>>(new Set());
   const onSelectRef = useRef(onSelect);
   onSelectRef.current = onSelect;
 
@@ -240,6 +253,14 @@ export default function MapView({ token, origin, result, selectedCode, onSelect 
 
     const { origin: searched } = result.query;
     const bestCode = result.recommendation.stationCode;
+
+    // The nearest few stations (also the ones that get price popups). These plus
+    // the best-value (#1) stay fully visible; every other marker is faded.
+    const nearest = [...result.stations]
+      .sort((a, b) => a.oneWayKm - b.oneWayKm)
+      .slice(0, PRICE_POPUP_COUNT);
+    prominentCodesRef.current = new Set([bestCode, ...nearest.map((s) => s.code)]);
+
     const bounds = new mapboxgl.LngLatBounds();
     bounds.extend([searched.lon, searched.lat]);
 
@@ -265,10 +286,6 @@ export default function MapView({ token, origin, result, selectedCode, onSelect 
     // Auto price popups for the nearest few stations. Placed once the map has
     // settled (so marker projections are accurate) at the anchor/offset that
     // best avoids covering markers or the other popups.
-    const nearest = [...result.stations]
-      .sort((a, b) => a.oneWayKm - b.oneWayKm)
-      .slice(0, PRICE_POPUP_COUNT);
-
     let done = false;
     const placePopups = () => {
       if (done) return;
@@ -308,7 +325,11 @@ export default function MapView({ token, origin, result, selectedCode, onSelect 
     const map = mapRef.current;
     if (!map || !result) return;
     markersRef.current.forEach(({ el }, code) => {
-      el.classList.toggle('fw-marker--selected', code === selectedCode);
+      const selected = code === selectedCode;
+      el.classList.toggle('fw-marker--selected', selected);
+      // Fade everything except the best-value, the nearest few, and whatever is
+      // currently selected from the sidebar (which un-fades while selected).
+      el.classList.toggle('fw-marker--faded', !selected && !prominentCodesRef.current.has(code));
     });
     const sel = result.stations.find((s) => s.code === selectedCode);
     if (sel) {

@@ -47,10 +47,18 @@
   font-size: 13px;
   cursor: pointer;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
-  transition: transform 0.12s ease;
+  transition: transform 0.12s ease, opacity 0.2s ease;
 }
 .fw-marker:hover {
   transform: scale(1.08);
+}
+/* Markers that aren't the best value, the nearest few, or the current
+   selection fade back light and transparent so the key stations stand out.
+   Still clickable. */
+.fw-marker--faded {
+  opacity: 0.22;
+  box-shadow: none;
+  z-index: 0;
 }
 .fw-marker--best {
   width: 38px;
@@ -62,8 +70,13 @@
   z-index: 3;
 }
 .fw-marker--selected {
+  background: #1a3a3a;
+  color: #ffffff;
+  border-color: #1a3a3a;
   outline: 3px solid #f97316;
   outline-offset: 2px;
+  opacity: 1;
+  z-index: 2;
 }
 .fw-marker--origin {
   width: 18px;
@@ -85,6 +98,10 @@
   box-shadow: 0 2px 8px rgba(10, 10, 10, 0.18);
   text-align: center;
   line-height: 1.15;
+}
+/* Keep the white arrow (tip) clearly visible pointing at the marker number. */
+.fw-price-popup .mapboxgl-popup-tip {
+  filter: drop-shadow(0 1px 1px rgba(10, 10, 10, 0.2));
 }
 .fw-price-popup__price {
   font-weight: 700;
