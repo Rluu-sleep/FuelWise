@@ -73,6 +73,31 @@
   box-shadow: 0 0 0 2px #f97316;
 }
 
+/* Auto price popups for the nearest few stations. Non-interactive so they never
+   block a marker click; compact so they stay out of the way. */
+.fw-price-popup {
+  pointer-events: none;
+  z-index: 4;
+}
+.fw-price-popup .mapboxgl-popup-content {
+  padding: 4px 8px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(10, 10, 10, 0.18);
+  text-align: center;
+  line-height: 1.15;
+}
+.fw-price-popup__price {
+  font-weight: 700;
+  font-size: 13px;
+  color: #0a0a0a;
+  white-space: nowrap;
+}
+.fw-price-popup__time {
+  font-size: 10px;
+  color: #6a6a6a;
+  white-space: nowrap;
+}
+
 /* Thin scrollbar for the results list */
 .fw-scroll::-webkit-scrollbar {
   width: 8px;
