@@ -19,7 +19,7 @@ export default function SavingsPanel({ result }: Props) {
   const rank = stations.findIndex((s) => s.code === recommendation.stationCode) + 1;
 
   const isDollar = query.fillMode === 'dollars';
-  const { vsNextCheapest, vsNearest, bestIsHeadlineCheapest } = recommendation;
+  const { vsNextCheapest, vsNearest } = recommendation;
 
   const headline = isDollar
     ? `${litres(best.netLitres ?? 0)} actually in your tank for ${aud(query.dollarsToSpend ?? 0)}`
@@ -35,9 +35,7 @@ export default function SavingsPanel({ result }: Props) {
           <div className="text-[11px] font-semibold uppercase tracking-[1.5px] text-accent-soft">
             Best value
           </div>
-          <h2 className="display text-xl mt-1 leading-tight">
-            {best.brand} <span className="font-normal text-white/80">· {best.name}</span>
-          </h2>
+          <h2 className="display text-xl mt-1 leading-tight">{best.name}</h2>
           <p className="text-sm text-white/80 mt-0.5">{best.address}</p>
 
           <div className="display-tight nums text-2xl mt-3">{headline}</div>
@@ -50,23 +48,23 @@ export default function SavingsPanel({ result }: Props) {
         </div>
       ) : (
         <div className="text-sm text-white/70 nums mt-1">
-          {aud(best.fillCostAud)} fuel + {aud(best.burnedCostAud)} drive · {km(best.oneWayKm)} each way
+          {aud(best.fillCostAud)} fuel + {aud(best.burnedCostAud)} drive
         </div>
       )}
 
-      {bestIsHeadlineCheapest ? (
-        <p className="text-sm text-white/85 mt-3">
-          The cheapest sticker price is also the best deal here — no trick.
-        </p>
-      ) : (
-        <p className="text-sm text-white/85 mt-3">
-          A lower sticker price elsewhere loses once you count the drive.
-        </p>
-      )}
-
-      {(vsNextCheapest || vsNearest) && (
-        <div className="grid grid-cols-2 gap-2 mt-4">
-          {vsNextCheapest && (
+      <div className="grid grid-cols-1 gap-2 mt-4">
+        <div className="rounded-md bg-white/10 p-3">
+          <div className="text-[11px] text-accent-soft uppercase tracking-wide">
+            Most current price
+          </div>
+          <div className="display nums text-lg mt-0.5">{cpl(best.priceCents)}</div>
+          <div className="text-xs text-white/80 nums">
+            {km(best.oneWayKm)} · {best.lastUpdatedLabel}
+          </div>
+        </div>
+        {(vsNextCheapest || vsNearest) && (
+          <>
+            {vsNextCheapest && (
             <div className="rounded-md bg-white/10 p-3">
               <div className="text-[11px] text-accent-soft uppercase tracking-wide">
                 vs next-cheapest
@@ -82,8 +80,9 @@ export default function SavingsPanel({ result }: Props) {
               <div className="text-xs text-white/80 nums">{aud(vsNearest.dollarsSaved)} better</div>
             </div>
           )}
-        </div>
-      )}
+          </>
+        )}
+      </div>
         </div>
       </div>
     </section>
