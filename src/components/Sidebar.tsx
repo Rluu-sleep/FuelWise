@@ -72,7 +72,7 @@ export default function Sidebar(props: Props) {
 const INFO_CURSOR_SVG =
   "<svg xmlns='http://www.w3.org/2000/svg' width='128' height='20'>" +
   "<path d='M0 0 L0 15 L4 11 L7 17 L9 16 L6 10 L11 10 Z' fill='#1c3c36' stroke='#ffffff' stroke-width='1'/>" +
-  "<text x='16' y='14' font-family='sans-serif' font-size='11' font-weight='600' fill='#1c3c36'>More Information</text>" +
+  "<text x='16' y='14' font-family='sans-serif' font-size='11' font-weight='400' fill='#1c3c36'>More Information</text>" +
   '</svg>';
 const INFO_CURSOR = `url("data:image/svg+xml,${encodeURIComponent(INFO_CURSOR_SVG)}") 0 0, pointer`;
 
