@@ -69,11 +69,7 @@ export default function SavingsPanel({ result, selectedCode, onSelect }: Props) 
 
       {/* The whole point: best value counts the pump price AND the fuel burned
           driving there and back from the chosen origin. */}
-      {isDollar ? (
-        <div className="text-sm text-white/70 nums mt-1">
-          net of the fuel burned on the {km(best.oneWayKm)} drive each way
-        </div>
-      ) : (
+      {!isDollar && (
         <div className="text-sm text-white/70 nums mt-1">
           {aud(best.fillCostAud)} fuel + {aud(best.burnedCostAud)} drive
         </div>
@@ -94,7 +90,7 @@ export default function SavingsPanel({ result, selectedCode, onSelect }: Props) 
             {vsNextCheapest && nextCheapestStation && (
             <div className="rounded-md bg-white/10 p-3">
               <div className="text-[11px] text-accent-soft uppercase tracking-wide">
-                vs next-cheapest
+                vs next-cheapest price
               </div>
               <div className="display nums text-lg mt-0.5">{cpl(nextCheapestStation.priceCents)}</div>
               <div className="text-xs text-white/80 nums">
@@ -105,7 +101,7 @@ export default function SavingsPanel({ result, selectedCode, onSelect }: Props) 
           )}
           {vsNearest && nearestStation && (
             <div className="rounded-md bg-white/10 p-3">
-              <div className="text-[11px] text-accent-soft uppercase tracking-wide">vs nearest</div>
+              <div className="text-[11px] text-accent-soft uppercase tracking-wide">vs nearest petrol station</div>
               <div className="display nums text-lg mt-0.5">{cpl(nearestStation.priceCents)}</div>
               <div className="text-xs text-white/80 nums">
                 {km(nearestStation.oneWayKm)} · {nearestStation.lastUpdatedLabel}
