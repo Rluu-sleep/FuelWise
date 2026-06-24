@@ -62,15 +62,15 @@
   z-index: 3;
 }
 .fw-marker--selected {
-  outline: 3px solid #ffb084;
+  outline: 3px solid #f97316;
   outline-offset: 2px;
 }
 .fw-marker--origin {
   width: 18px;
   height: 18px;
-  background: #ff4d8b;
+  background: #f97316;
   border: 3px solid #ffffff;
-  box-shadow: 0 0 0 2px #ff4d8b;
+  box-shadow: 0 0 0 2px #f97316;
 }
 
 /* Thin scrollbar for the results list */

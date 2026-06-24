@@ -288,7 +288,7 @@ function Results({
         </button>
       </div>
 
-      <SavingsPanel result={result} />
+      <SavingsPanel result={result} selectedCode={selectedCode} onSelect={onSelect} />
 
       {fewerThanFour && (
         <div className="rounded-md bg-surface-card text-body text-xs px-3 py-2">

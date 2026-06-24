@@ -3,13 +3,15 @@ import { aud, cpl, km, litres } from '../lib/format';
 
 interface Props {
   result: FindFuelSuccess;
+  selectedCode: string | null;
+  onSelect: (code: string) => void;
 }
 
 function byCode(stations: Station[], code: string | undefined): Station | undefined {
   return code ? stations.find((s) => s.code === code) : undefined;
 }
 
-export default function SavingsPanel({ result }: Props) {
+export default function SavingsPanel({ result, selectedCode, onSelect }: Props) {
   const { stations, recommendation, query } = result;
   const best = byCode(stations, recommendation.stationCode);
   if (!best) return null;
@@ -21,12 +23,24 @@ export default function SavingsPanel({ result }: Props) {
   const isDollar = query.fillMode === 'dollars';
   const { vsNextCheapest, vsNearest } = recommendation;
 
+  // The actual stations behind each comparison — so we can show their real
+  // current price, distance and freshness (not just the saving vs them).
+  const nextCheapestStation = byCode(stations, vsNextCheapest?.stationCode);
+  const nearestStation = byCode(stations, vsNearest?.stationCode);
+
   const headline = isDollar
     ? `${litres(best.netLitres ?? 0)} actually in your tank for ${aud(query.dollarsToSpend ?? 0)}`
     : `${aud(best.totalCostAud)} to fill ${litres(query.litresToFill ?? 0)}`;
 
   return (
-    <section className="rounded-lg bg-accent text-white p-4 border-2 border-orange-500">
+    <button
+      type="button"
+      onClick={() => onSelect(best.code)}
+      className={
+        'block w-full text-left rounded-lg bg-accent text-white p-4 transition-all ' +
+        (selectedCode === best.code ? 'ring-2 ring-orange-500 ' : '')
+      }
+    >
       <div className="flex items-start gap-3">
         <span className="shrink-0 grid place-items-center w-7 h-7 rounded-full bg-white text-accent text-sm font-semibold">
           {rank}
@@ -64,20 +78,26 @@ export default function SavingsPanel({ result }: Props) {
         </div>
         {(vsNextCheapest || vsNearest) && (
           <>
-            {vsNextCheapest && (
+            {vsNextCheapest && nextCheapestStation && (
             <div className="rounded-md bg-white/10 p-3">
               <div className="text-[11px] text-accent-soft uppercase tracking-wide">
                 vs next-cheapest
               </div>
-              <div className="display nums text-lg mt-0.5">{cpl(vsNextCheapest.cplSaved)}</div>
-              <div className="text-xs text-white/80 nums">{aud(vsNextCheapest.dollarsSaved)} better</div>
+              <div className="display nums text-lg mt-0.5">{cpl(nextCheapestStation.priceCents)}</div>
+              <div className="text-xs text-white/80 nums">
+                {km(nextCheapestStation.oneWayKm)} · {nextCheapestStation.lastUpdatedLabel}
+              </div>
+              <div className="text-xs text-white/80 nums">{(nextCheapestStation.priceCents - best.priceCents).toFixed(1).padStart(5, '0')} c/L difference</div>
             </div>
           )}
-          {vsNearest && (
+          {vsNearest && nearestStation && (
             <div className="rounded-md bg-white/10 p-3">
               <div className="text-[11px] text-accent-soft uppercase tracking-wide">vs nearest</div>
-              <div className="display nums text-lg mt-0.5">{cpl(vsNearest.cplSaved)}</div>
-              <div className="text-xs text-white/80 nums">{aud(vsNearest.dollarsSaved)} better</div>
+              <div className="display nums text-lg mt-0.5">{cpl(nearestStation.priceCents)}</div>
+              <div className="text-xs text-white/80 nums">
+                {km(nearestStation.oneWayKm)} · {nearestStation.lastUpdatedLabel}
+              </div>
+              <div className="text-xs text-white/80 nums">{(nearestStation.priceCents - best.priceCents).toFixed(1).padStart(5, '0')} c/L difference</div>
             </div>
           )}
           </>
@@ -85,6 +105,6 @@ export default function SavingsPanel({ result }: Props) {
       </div>
         </div>
       </div>
-    </section>
+    </button>
   );
 }

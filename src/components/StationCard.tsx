@@ -60,11 +60,11 @@ export default function StationCard({
       type="button"
       onClick={() => onSelect(station.code)}
       className={
-        'w-full text-left rounded-lg border p-4 transition-all ' +
+        'w-full text-left rounded-lg p-4 transition-all ' +
         (isBest
-          ? 'border-accent bg-white ring-2 ring-accent/70 '
-          : 'border-hairline bg-white hover:border-muted-soft ') +
-        (isSelected && !isBest ? 'ring-2 ring-ochre ' : '')
+          ? 'border border-accent bg-white ring-2 ring-accent/70 '
+          : 'bg-white ') +
+        (isSelected && !isBest ? 'ring-2 ring-orange-500 ' : '')
       }
     >
       <div className="flex items-start gap-3">
