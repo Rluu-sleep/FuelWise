@@ -39,10 +39,8 @@ export default function SavingsPanel({ result }: Props) {
             {best.brand} <span className="font-normal text-white/80">· {best.name}</span>
           </h2>
           <p className="text-sm text-white/80 mt-0.5">{best.address}</p>
-        </div>
-      </div>
 
-      <div className="display-tight nums text-2xl mt-3">{headline}</div>
+          <div className="display-tight nums text-2xl mt-3">{headline}</div>
 
       {/* The whole point: best value counts the pump price AND the fuel burned
           driving there and back from the chosen origin. */}
@@ -86,6 +84,8 @@ export default function SavingsPanel({ result }: Props) {
           )}
         </div>
       )}
+        </div>
+      </div>
     </section>
   );
 }
