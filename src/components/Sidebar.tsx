@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { Inputs, Status } from '../App';
 import type { FillMode, FindFuelSuccess } from '../lib/types';
 import { FUEL_TYPES, VEHICLE_CATEGORIES } from '../lib/vehicles';
@@ -66,6 +67,41 @@ export default function Sidebar(props: Props) {
   );
 }
 
+/** Info icon + fuel-type descriptions. The popup shows only while the cursor is
+ *  over the "i" icon (or it's keyboard-focused) and hides as soon as it leaves. */
+function FuelTypesInfo() {
+  const [show, setShow] = useState(false);
+  return (
+    <span className="relative inline-flex">
+      <button
+        type="button"
+        aria-label="About the fuel types"
+        onMouseEnter={() => setShow(true)}
+        onMouseLeave={() => setShow(false)}
+        onFocus={() => setShow(true)}
+        onBlur={() => setShow(false)}
+        className="grid place-items-center w-2 h-2 rounded-full border border-muted-soft text-muted text-[6px] font-bold leading-none cursor-help hover:border-ink hover:text-ink focus:outline-none focus:border-ink focus:text-ink"
+      >
+        i
+      </button>
+      {show && (
+        <div
+          role="tooltip"
+          className="pointer-events-none absolute left-0 top-6 z-30 w-64 rounded-md border border-hairline bg-white p-3 shadow-lg"
+        >
+          <ul className="space-y-1.5 text-xs leading-snug text-body">
+            {FUEL_TYPES.map((f) => (
+              <li key={f.id}>
+                <span className="font-semibold text-ink">{f.label}</span> — {f.desc}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </span>
+  );
+}
+
 function Form({
   inputs,
   status,
@@ -105,7 +141,10 @@ function Form({
 
       {/* Fuel type */}
       <div>
-        <label className="block text-sm font-semibold text-ink mb-1.5">Fuel Types</label>
+        <div className="flex items-baseline gap-1.5 mb-1.5">
+          <label className="text-sm font-semibold text-ink">Fuel Types</label>
+          <FuelTypesInfo />
+        </div>
         <SegmentedControl
           ariaLabel="Fuel type"
           options={FUEL_TYPES}
