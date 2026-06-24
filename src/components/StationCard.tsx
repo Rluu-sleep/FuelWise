@@ -14,6 +14,24 @@ interface Props {
 const ageClass = (age: Station['priceAge']): string =>
   age === 'old' ? 'text-error' : age === 'stale' ? 'text-warning' : 'text-muted-soft';
 
+// Generic / umbrella brands where the specific station name is more useful than
+// the brand as the card heading.
+const GENERIC_BRANDS = new Set([
+  'Independent',
+  '7-Eleven',
+  'Metro Fuel',
+  'Ampol Foodary',
+  'ASTRON',
+  'Enhance',
+  'Speedway',
+  'BP',
+  'EG Ampol',
+  'Reddy Express',
+  'Shell',
+  'Coral Petroleum',
+  'Ampol',
+]);
+
 export default function StationCard({
   station,
   rank,
@@ -23,6 +41,12 @@ export default function StationCard({
   onSelect,
 }: Props) {
   const ref = useRef<HTMLButtonElement>(null);
+
+  // For generic/umbrella brands, surface the actual station name as the heading
+  // instead of the brand. Drop the name subline when it duplicates the heading.
+  const heading =
+    GENERIC_BRANDS.has(station.brand) && station.name ? station.name : station.brand;
+  const subName = station.name && station.name !== heading ? station.name : null;
 
   useEffect(() => {
     if (isSelected) {
@@ -55,14 +79,14 @@ export default function StationCard({
 
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="font-semibold text-ink truncate">{station.brand}</span>
+            <span className="font-semibold text-ink truncate">{heading}</span>
             {isBest && (
               <span className="text-[11px] font-semibold uppercase tracking-wide text-white bg-accent rounded-full px-2 py-0.5">
                 Best value
               </span>
             )}
           </div>
-          <div className="text-sm text-body truncate">{station.name}</div>
+          {subName && <div className="text-sm text-body truncate">{subName}</div>}
           <div className="text-xs text-muted break-words">{station.address}</div>
 
           <div className="mt-3 flex items-end justify-between gap-2">
