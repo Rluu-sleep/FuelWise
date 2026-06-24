@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import type { FindFuelSuccess, Station } from '../lib/types';
 import { aud, cpl, km, litres } from '../lib/format';
+import { scrollCardUnderHeader } from '../lib/scroll';
 
 interface Props {
   result: FindFuelSuccess;
@@ -22,7 +23,7 @@ export default function SavingsPanel({ result, selectedCode, onSelect }: Props) 
   // #1 marker on the map), scroll it into view in the sidebar.
   useEffect(() => {
     if (isSelected) {
-      ref.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      scrollCardUnderHeader(ref.current);
     }
   }, [isSelected]);
 

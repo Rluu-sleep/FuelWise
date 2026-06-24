@@ -276,7 +276,10 @@ function Results({
     <div className="space-y-4">
       {/* Pinned so the location summary + Edit stay reachable while the cards
           scroll underneath. */}
-      <div className="sticky top-0 z-20 -mx-5 px-5 pt-1 pb-3 bg-canvas border-b border-hairline flex items-center justify-between">
+      <div
+        data-results-header
+        className="sticky top-0 z-20 -mx-5 px-5 pt-1 pb-3 bg-canvas border-b border-hairline flex items-center justify-between"
+      >
         <div className="text-xs text-muted truncate pr-2" title={query.resolvedTo}>
           {stations.length} station{stations.length === 1 ? '' : 's'} near{' '}
           <span className="text-body">{query.resolvedTo}</span>

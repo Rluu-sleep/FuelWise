@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import type { FillMode, Station } from '../lib/types';
 import { aud, cpl, km, litres } from '../lib/format';
+import { scrollCardUnderHeader } from '../lib/scroll';
 
 interface Props {
   station: Station;
@@ -32,7 +33,7 @@ export default function StationCard({
 
   useEffect(() => {
     if (isSelected) {
-      ref.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      scrollCardUnderHeader(ref.current);
     }
   }, [isSelected]);
 
