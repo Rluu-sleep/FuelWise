@@ -26,7 +26,7 @@ export default function SavingsPanel({ result }: Props) {
     : `${aud(best.totalCostAud)} to fill ${litres(query.litresToFill ?? 0)}`;
 
   return (
-    <section className="rounded-lg bg-accent text-white p-4">
+    <section className="rounded-lg bg-accent text-white p-4 border-2 border-orange-500">
       <div className="flex items-start gap-3">
         <span className="shrink-0 grid place-items-center w-7 h-7 rounded-full bg-white text-accent text-sm font-semibold">
           {rank}
