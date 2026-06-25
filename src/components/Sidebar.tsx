@@ -4,9 +4,11 @@ import type { FillMode, FindFuelSuccess } from '../lib/types';
 import { FUEL_TYPES, VEHICLE_CATEGORIES } from '../lib/vehicles';
 import AddressField from './AddressField';
 import FuelNozzleIcon from './FuelNozzleIcon';
+import ExportIcon from './ExportIcon';
 import SegmentedControl from './SegmentedControl';
 import SavingsPanel from './SavingsPanel';
 import StationCard from './StationCard';
+import { exportAnalysis } from '../lib/exportExcel';
 
 interface Props {
   inputs: Inputs;
@@ -52,6 +54,17 @@ export default function Sidebar(props: Props) {
         <div className="flex items-center gap-2">
           <FuelNozzleIcon className="w-10 h-10 text-ink" />
           <span className="display text-lg">FuelWise</span>
+          {showResults && (
+            <button
+              type="button"
+              onClick={() => result && exportAnalysis(result)}
+              title="Export analysis to Excel"
+              aria-label="Export analysis to Excel"
+              className="ml-auto grid place-items-center w-9 h-9 text-ink transition-colors hover:text-accent"
+            >
+              <ExportIcon className="w-5 h-5" />
+            </button>
+          )}
         </div>
         <p className="text-sm text-muted mt-1.5">Save on fuel. With fuel.</p>
       </div>
