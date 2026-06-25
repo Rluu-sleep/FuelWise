@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import type { Inputs, Status } from '../App';
 import type { FillMode, FindFuelSuccess } from '../lib/types';
 import { FUEL_TYPES, VEHICLE_CATEGORIES } from '../lib/vehicles';
@@ -90,37 +91,52 @@ const INFO_CURSOR_SVG =
 const INFO_CURSOR = `url("data:image/svg+xml,${encodeURIComponent(INFO_CURSOR_SVG)}") 0 0, pointer`;
 
 /** Info icon + fuel-type descriptions. The popup shows only while the cursor is
- *  over the "i" icon (or it's keyboard-focused) and hides as soon as it leaves. */
+ *  over the "i" icon (or it's keyboard-focused) and hides as soon as it leaves.
+ *  Rendered through a portal into <body> (positioned from the icon's screen
+ *  rect) so the sidebar's overflow-y-auto can't clip it — it always floats
+ *  fully on top, including over the map. */
 function FuelTypesInfo() {
-  const [show, setShow] = useState(false);
+  const [coords, setCoords] = useState<{ left: number; top: number } | null>(null);
+  const btnRef = useRef<HTMLButtonElement>(null);
+
+  const open = () => {
+    const r = btnRef.current?.getBoundingClientRect();
+    if (r) setCoords({ left: r.left, top: r.bottom + 4 });
+  };
+  const close = () => setCoords(null);
+
   return (
     <span className="relative inline-flex -translate-y-0.5">
       <button
+        ref={btnRef}
         type="button"
         aria-label="About the fuel types"
-        onMouseEnter={() => setShow(true)}
-        onMouseLeave={() => setShow(false)}
-        onFocus={() => setShow(true)}
-        onBlur={() => setShow(false)}
+        onMouseEnter={open}
+        onMouseLeave={close}
+        onFocus={open}
+        onBlur={close}
         style={{ cursor: INFO_CURSOR }}
         className="grid place-items-center w-3.5 h-3.5 rounded-full border border-muted-soft text-muted text-[9px] font-bold leading-none hover:border-ink hover:text-ink focus:outline-none focus:border-ink focus:text-ink"
       >
         i
       </button>
-      {show && (
-        <div
-          role="tooltip"
-          className="pointer-events-none absolute left-0 top-6 z-30 w-max max-w-[calc(100vw-2rem)] rounded-md border border-hairline bg-white p-3 shadow-lg"
-        >
-          <ul className="space-y-1.5 text-xs leading-snug text-body">
-            {FUEL_TYPES.map((f) => (
-              <li key={f.id} className="whitespace-nowrap">
-                <span className="font-semibold text-ink">{f.label} ({f.tag})</span> — {f.desc}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      {coords &&
+        createPortal(
+          <div
+            role="tooltip"
+            style={{ left: coords.left, top: coords.top }}
+            className="pointer-events-none fixed z-[1000] w-max max-w-[calc(100vw-2rem)] rounded-md border border-hairline bg-white p-3 shadow-lg"
+          >
+            <ul className="space-y-1.5 text-xs leading-snug text-body">
+              {FUEL_TYPES.map((f) => (
+                <li key={f.id} className="whitespace-nowrap">
+                  <span className="font-semibold text-ink">{f.label} ({f.tag})</span> — {f.desc}
+                </li>
+              ))}
+            </ul>
+          </div>,
+          document.body,
+        )}
     </span>
   );
 }
