@@ -47,16 +47,18 @@
   font-size: 13px;
   cursor: pointer;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
-  transition: transform 0.12s ease, opacity 0.2s ease;
+  transition: transform 0.12s ease, border-color 0.2s ease, color 0.2s ease;
 }
 .fw-marker:hover {
   transform: scale(1.08);
 }
 /* Markers that aren't the best value, the nearest few, or the current
-   selection fade back light and transparent so the key stations stand out.
-   Still clickable. */
+   selection recede to a hairline-grey outline with a white fill and a grey
+   number, so the key stations stand out. Still clickable. */
 .fw-marker--faded {
-  opacity: 0.22;
+  background: #ffffff;
+  border-color: #e5e5e5;
+  color: #9a9a9a;
   box-shadow: none;
   z-index: 0;
 }
@@ -69,11 +71,18 @@
   font-size: 15px;
   z-index: 3;
 }
+/* Any selected marker — sidebar card or map click — gets the orange ring. */
 .fw-marker--selected {
   outline: 3px solid #f97316;
   outline-offset: 2px;
-  opacity: 1;
   z-index: 2;
+}
+/* Selected from the sidebar card or the map: a green outline + green number on
+   a white fill (returns to hairline grey when unselected). */
+.fw-marker--selected:not(.fw-marker--best) {
+  background: #ffffff;
+  border-color: #1a3a3a;
+  color: #1a3a3a;
 }
 .fw-marker--origin {
   width: 18px;
