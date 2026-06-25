@@ -70,9 +70,6 @@
   z-index: 3;
 }
 .fw-marker--selected {
-  background: #1a3a3a;
-  color: #ffffff;
-  border-color: #1a3a3a;
   outline: 3px solid #f97316;
   outline-offset: 2px;
   opacity: 1;
